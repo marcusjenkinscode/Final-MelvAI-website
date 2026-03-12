@@ -98,16 +98,19 @@ if ('IntersectionObserver' in window) {
 function animateCounter(element, target) {
   var current = 0;
   var duration = 1500;
-  var stepTime = Math.max(Math.floor(duration / target), 16);
+  var frameInterval = 16;
+  var totalFrames = Math.floor(duration / frameInterval);
+  var increment = target / totalFrames;
 
   var timer = setInterval(function () {
-    current += 1;
-    element.textContent = current;
+    current += increment;
     if (current >= target) {
       clearInterval(timer);
       element.textContent = target;
+    } else {
+      element.textContent = Math.floor(current);
     }
-  }, stepTime);
+  }, frameInterval);
 }
 
 // ===== Contact Form Handling =====
@@ -117,12 +120,8 @@ if (contactForm) {
   contactForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    var formData = new FormData(contactForm);
-    var name = formData.get('name');
-    var email = formData.get('email');
-    var message = formData.get('message');
-
-    if (!name || !email || !message) {
+    if (!contactForm.checkValidity()) {
+      contactForm.reportValidity();
       return;
     }
 
